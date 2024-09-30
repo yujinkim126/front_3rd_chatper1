@@ -37,10 +37,12 @@ function checkAuth(path) {
 }
 
 // Header 및 Footer 렌더링 함수
-function renderHeaderAndFooter(path, isOnlyComponent) {
-  const headerContent = !isOnlyComponent ? Header.template(path) : "";
-  const footerContent = !isOnlyComponent ? Footer.template() : "";
-  return `${headerContent}${footerContent}`;
+function renderHeader(path) {
+  return Header.template(path);
+}
+
+function renderFooter() {
+  return Footer.template();
 }
 
 // 이벤트 바인딩 함수
@@ -66,10 +68,23 @@ function renderPage(path) {
   }
 
   // root 요소에 헤더, 컴포넌트, 푸터 노출 여부 확인 후 페이지 렌더링
-  $root.innerHTML = `
-    ${renderHeaderAndFooter(path, isOnlyComponent)}  
-    ${component.template()} 
-  `;
+  $root.innerHTML = ""; // 초기화
+
+  // 헤더 렌더링 (isOnlyComponent가 false인 경우에만)
+  if (!isOnlyComponent) {
+    $root.insertAdjacentHTML("beforeend", renderHeader(path));
+  }
+
+  // 컴포넌트 렌더링
+  $root.insertAdjacentHTML(
+    "beforeend",
+    `<div id="content">${component.template()}</div>`
+  );
+
+  // 푸터 렌더링 (isOnlyComponent가 false인 경우에만)
+  if (!isOnlyComponent) {
+    $root.insertAdjacentHTML("beforeend", renderFooter());
+  }
 
   // 이벤트 바인딩
   bindEvents(component);
